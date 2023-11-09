@@ -1,15 +1,35 @@
-import express, { type Response, type Request } from "express";
-import bodyParser from 'body-parser'
-
+import express, { type Response, type Request } from 'express'
+import { PrismaClient } from '@prisma/client'
+import cors from "cors"
+import handleFileUpload from './uploadFiles.js'
 const app = express()
+const prisma = new PrismaClient()
+app.use(cors("*"))
+app.use(express.json())
 
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hello')
+})
 
-app.use(express.json());
+app.post('/story/add', (req: Request, res: Response) => {
+    // const data = {
+    //     store_id: req.body.store_id,
+    //     order: req.body.order,
+    //     story_name: req.body.story_name,
+    //     thumbnail: 'need to get the url',
+    //     path: req.body.path,
+    //     status: req.body.status,
+    //     files: req.body.files,
+    // }
+    console.log(req.body)
 
-app.get("/", (req: Request, res : Response ) => {
-  res.send("Healthy");
-});
+    
+    // handleFileUpload(file)
+    
 
-const PORT = 3001;
+    res.sendStatus(200)
+})
 
-app.listen(PORT, () => console.log('server is running at :', 3001))
+const PORT = 3000
+
+app.listen(PORT, () => console.log('server is running at :', PORT))
