@@ -1,35 +1,89 @@
 import express, { type Response, type Request } from 'express'
 import { PrismaClient } from '@prisma/client'
-import cors from "cors"
-import handleFileUpload from './uploadFiles.js'
+import cors from 'cors'
+import {v4 as uuid} from 'uuid'
+
 const app = express()
+
 const prisma = new PrismaClient()
-app.use(cors("*"))
+
+app.use(cors('*'))
 app.use(express.json())
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/stories', (req: Request, res: Response) => {
     res.send('Hello')
 })
 
-app.post('/story/add', (req: Request, res: Response) => {
-    // const data = {
-    //     store_id: req.body.store_id,
-    //     order: req.body.order,
-    //     story_name: req.body.story_name,
-    //     thumbnail: 'need to get the url',
-    //     path: req.body.path,
-    //     status: req.body.status,
-    //     files: req.body.files,
-    // }
-    console.log(req.body)
+const createProduct = async (product_handle, media_id) =>
+    await prisma.product.create({
+        data: {
+            product_handle,
+            media_id,
+        },
+    })
 
-    
-    // handleFileUpload(file)
-    
+const createMedia = async (media_id, story_id, media_order, media_url) =>
+    await prisma.media.create({
+        data: {
+            media_id,
+            story_id,
+            media_order,
+            media_url,
+        },
+    })
 
-    res.sendStatus(200)
+const createStory = async (story_id, store_id, story_name, thumbnail, path) =>
+    await prisma.story.create({
+        data: {
+            story_id,
+            store_id,
+            story_name,
+            thumbnail,
+            path,
+        },
+    })
+
+app.post('/story/add', async (req: Request, res: Response) => {
+    try {
+        const story_id = uuid()
+        const { store_id, story_name, thumbnail, path, files } = req.body
+
+        // Inserting story in table
+        createStory(story_id, store_id, story_name, thumbnail, path)
+
+        // files.length &&
+        //     files.forEach(({ media_order, media_url, products }) => {
+        //         const media_id = uuid()
+        //         // Inserting child stories in table
+        //         createMedia(media_id, story_id, media_order, media_url)
+        //         // products.length &&
+        //         //     products.forEach(({ product_handle }) => {
+        //         //         // Inserting products in table
+        //         //         createProduct(product_handle, media_id)
+        //         //     })
+        //     })
+        res.sendStatus(200)
+    } catch (e) {
+        console.log(e)
+    }
 })
 
 const PORT = 3000
 
 app.listen(PORT, () => console.log('server is running at :', PORT))
+
+
+
+// requestBody: {
+//     store_id : string
+//     story_name: string
+//     thumbnail: string
+//     path: string
+//     files : [
+//                { order: number,
+//                   media_url: string,
+//                   products: [ 'product-handle-name' , ....]
+//                }
+//                .....
+//                ]
+//      }

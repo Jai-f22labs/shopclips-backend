@@ -19,7 +19,7 @@ model Store {
 }
 
 model Story {
-  story_id Int @id @default(autoincrement())
+  story_id String @unique
   store_id String
   order Int @default(autoincrement())
   story_name String
