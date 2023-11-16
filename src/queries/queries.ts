@@ -45,10 +45,10 @@ const createStory = async ({
     })
 
 const getStore = async ({ store_id, access_token }) =>
-    await prisma.store.findUnique({
+    await prisma.session.findUnique({
         where: {
-            access_token,
-            store_id,
+            id: store_id,
+            accessToken: access_token
         },
     })
 

@@ -6,7 +6,7 @@ import { injectChildStoriesAndProducts } from '../helpers/helper.js'
 // Fetch Stories API
 const getAllStories = async (req: Request, res: Response) => {
     try {
-        const { store_id, access_token, path } = req.body
+        const { store_id, access_token, path } = req.query;
         if (!store_id || !access_token) {
             // If any required field is missing, throw an error
             throw new Error('Invalid request: Required fields are missing.')
